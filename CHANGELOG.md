@@ -4,6 +4,22 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [4.0.0-rc.7] — 2026-08-31
 
+### Re-arm dependency audit after upstream fixes (2026-10-01)
+
+> **TL;DR:** Raise the source floors to `js-yaml@5.4.1`, `hono@4.13.11`, `@hono/node-server@2.1.3`, `adm-zip@0.6.1` and `brace-expansion@5.0.12`, and remove the two superseded consumer exceptions instead of adding exceptions for newly reported advisories.
+>
+> **Bounded claim.** The root lockfile and MCPB consumer contract now require the patched dependency versions. Fresh npm consumers can resolve Transformers 4.3.0 with patched Sharp and a newer ONNX Runtime that admits patched adm-zip; both audit allowlists are empty. Historical publications and existing consumer installations remain unchanged. Removing exceptions is audit policy, not proof of a clean graph: the hosted source and clean-consumer audits must establish the reported graph before merge. The SDK wrapper still requires Node-server 1.x, so the independently identified new `serveStatic` advisory remains a consumer residual despite the patched source/MCPB override; SECURITY.md records the publication boundary explicitly.
+>
+> **Method note:** Compared the three minimal Dependabot patches with the current lockfile, checked GitHub security advisories and public registry metadata, swept the matching Basic-bundle policy and structural contract, and retained fail-closed production moderate+/development high+ thresholds. Hosted audit found two additional HIGH brace-expansion advisories; independent public-code review then identified its medium-severity quadratic expansion advisory (fixed in 5.0.12) and Hono's double-decoding advisory (fixed in Hono 4.13.11 / Node-server 2.1.3). The Hono advisory was available in the upstream repository before the global advisory API could resolve it. Source-floor claims now refer to these verified published fixes rather than treating the CI threshold as a complete advisory inventory. The packed three-OS consumer and full hosted CI gates validate compatibility.
+
+### Maintainer context refresh (2026-10-01)
+
+> **TL;DR:** The agent guide keeps current work and standing rules in a short entrypoint; the complete release log remains available in Git history and this CHANGELOG.
+>
+> **Bounded claim.** The approved CLAUDE.md reduction retains both version markers, current test-count markers, and the standing-rule sections; independent review additionally rescued the log-only rule to re-measure quantitative claims after rebuilding an artifact. The full predecessor remains in Git history. Its current header names the September implementation boundary and accepted tooling/AH-7/AH-8 queue. AGENTS.md now records hosted-only validation and the current 13-context, admin-enforced, linear-history protection snapshot. This documentation change does not close pending behavioral audit findings or publish rc.7.
+>
+> **Method note:** Compared the predecessor and trimmed guide, reconciled current claims against GitHub main, inspected the consumer checks for both version/test-count markers, and corrected scope-audit comments that still described the removed log. Candidate CI and independent read-only review validate the resulting change before merge.
+
 ### `resources/list` answers in bounded pages with an opaque cursor (AH-6)
 
 > **TL;DR:** **`resources/list` answers in bounded pages with an opaque continuation cursor, for a vault of any size — the page comes from a resumable walk whose cost is proportional to the page, not the vault.**

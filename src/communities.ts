@@ -30,6 +30,7 @@
 import * as path from "node:path";
 import { foldName } from "./name-fold.js";
 import type { Vault } from "./vault.js";
+import { toVaultSlashPath } from "./vault-path-policy.js";
 
 /**
  * v3.9.0-rc.35 (external-audit AS#5 / R-B) — hard cap on the number of notes
@@ -203,7 +204,7 @@ export async function buildWikilinkGraph(
   // stable ambiguity tiebreaker. Normalize and sort before building either the
   // basename authority or the node/adjacency arrays.
   const all = listing.entries
-    .map((entry) => ({ entry, nodePath: entry.relPath.replace(/\\/g, "/") }))
+    .map((entry) => ({ entry, nodePath: toVaultSlashPath(entry.relPath) }))
     .sort((a, b) => comparePaths(a.nodePath, b.nodePath));
 
   let nodeUtf8Bytes = 0;
@@ -281,7 +282,7 @@ export async function buildWikilinkGraph(
       let toPath: string | undefined;
       if (target.includes("/")) {
         const candidate = target.endsWith(".md") ? target : `${target}.md`;
-        const normalized = candidate.replace(/\\/g, "/");
+        const normalized = toVaultSlashPath(candidate);
         if (adj.has(normalized)) toPath = normalized;
       }
       if (!toPath) {

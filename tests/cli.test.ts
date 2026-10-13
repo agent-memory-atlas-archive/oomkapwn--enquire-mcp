@@ -1326,9 +1326,18 @@ describe("CLI subcommands E2E (against built dist/)", () => {
     expect(readPaths(dedicatedIndex)).toContain("Public/Visible.md");
     expect(readPaths(dedicatedIndex)).not.toContain("Private/Secret.md");
 
-    // The lease scope NFC-normalizes its identity, but that identity is not a
-    // storage pathname. On filesystems where NFC and NFD leaves are distinct,
-    // preserve the exact selected NFD leaf and never create an NFC sibling.
+    // Before FA-02 the lease scope NFC-normalized its identity but that
+    // identity was not a storage pathname, so this site re-derived the exact
+    // selected leaf by hand — which is why FTS was already the one correct
+    // call site. FA-02 removes the normalization from the lease but this site
+    // STILL hand-derives the leaf and never reads `selected.targetName`, so
+    // this assertion continues to guard that hand-derivation, not the lease
+    // identity. (The only `targetName` use here is the `shouldSync`
+    // comparison, which is provably unaffected: the default index basename is
+    // `<12-hex-sha1>.fts5.db`, pure ASCII, and NFC cannot turn a non-ASCII
+    // selection into it.) On filesystems where NFC and NFD leaves are
+    // distinct, the exact selected NFD leaf is preserved and no NFC sibling
+    // is ever created.
     const normalizationParent = path.join(tmpdir, "normalization-sensitive-index-parent");
     await fs.mkdir(normalizationParent);
     const nfdIndex = path.join(normalizationParent, "cafe\u0301.fts5.db");
